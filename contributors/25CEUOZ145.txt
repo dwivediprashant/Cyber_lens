@@ -1,3 +1,4 @@
 Name: Vrajkumar Shah
 GitHub Username: vraj826
-Favorite Game: Cricket
+Your hobbies: Playing Cricket, Watching Movies.
+What I expect from this event: I want to learn how open source projects work and improve my collaboration skills.
