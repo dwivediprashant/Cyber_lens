@@ -4,9 +4,9 @@ const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 type Row = {
   ioc: string;
-  verdict: "Malicious" | "Clean" | "Suspicious" | "";
+  verdict?: "Malicious" | "Clean" | "Suspicious";
   timestamp: string;
-  score: number;
+  score?: number;
 };
 
 export default function History() {
@@ -31,10 +31,11 @@ export default function History() {
   
         const mapped: Row[] = data.map((r: any) => ({
           ioc: r.ioc_value,
-          verdict: r.verdict ?? "",
+          verdict: r.verdict ?? undefined,
           timestamp: new Date(r.created_at).toLocaleString(),
-          score: r.score ?? 0,
+          score: r.score ?? undefined,
         }));
+
   
         setRows(mapped);
       } catch (err) {
@@ -121,7 +122,10 @@ export default function History() {
                 </span>
               </div>
 
-              <div className="mt-2 text-sm text-neutral-300">{row.score}</div>
+              <div className="mt-2 text-sm text-neutral-300">
+                {row.score ?? "—"}
+              </div>
+
 
               <div className="mt-3 text-xs text-neutral-400">
                 {row.timestamp}
@@ -187,7 +191,7 @@ export default function History() {
                     </td>
 
                     <td className="border border-neutral-800 px-4 py-3 text-neutral-300 truncate max-w-xs">
-                      {row.score || "—"}
+                      {row.score ?? "—"}
                     </td>
                   </tr>
                 ))}
