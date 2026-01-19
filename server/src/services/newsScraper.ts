@@ -75,10 +75,7 @@ const DOMAIN_REGEX = /\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b/gi;
 const HASH_REGEX = /\b(?:[a-f0-9]{32}|[a-f0-9]{40}|[a-f0-9]{64})\b/gi;
 
 function parsePublishedDate(value?: string): Date | undefined {
-  if (!value) {
-    return undefined;
-  }
-
+  if (!value) return undefined;
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime()) ? undefined : parsed;
 }
@@ -94,13 +91,10 @@ function trimBoundaries(value: string): string {
 function normalizeIocValue(rawValue: string, type: IocType): string {
   let normalized = trimBoundaries(rawValue.trim().toLowerCase());
 
-  if (!normalized) {
-    return normalized;
-  }
+  if (!normalized) return normalized;
 
   if (type === "url") {
-    normalized = normalized.replace(/^https?:\/\//, "");
-    normalized = normalized.replace(/\/+$/, "");
+    normalized = normalized.replace(/^https?:\/\//, "").replace(/\/+$/, "");
   }
 
   if (type === "domain") {
@@ -137,22 +131,13 @@ function extractIocsFromText(text: string): ExtractedIoc[] {
 
   for (const candidate of candidates) {
     const detection = detectIocType(candidate);
-
-    if (!detection.type) {
-      continue;
-    }
+    if (!detection.type) continue;
 
     const normalized = normalizeIocValue(candidate, detection.type);
-
-    if (!normalized) {
-      continue;
-    }
+    if (!normalized) continue;
 
     const key = `${detection.type}:${normalized}`;
-
-    if (seen.has(key)) {
-      continue;
-    }
+    if (seen.has(key)) continue;
 
     seen.add(key);
     extracted.push({ type: detection.type, value: normalized });
@@ -192,34 +177,41 @@ class NewsScraper {
 
           for (const item of items) {
             const article = this.mapItemToArticle(item);
+            if (!article) continue;
 
-            if (!article) {
+            await client.query("BEGIN");
+
+            try {
+              const { articleId, inserted } = await this.saveArticle(
+                client,
+                sourceId,
+                article,
+              );
+
+              const iocs = extractIocsFromText(
+                [article.title, article.summary, article.content, article.url]
+                  .filter(Boolean)
+                  .join(" "),
+              );
+
+              const insertedIocs = await this.persistIocs(
+                client,
+                articleId,
+                iocs,
+              );
+
+              await client.query("COMMIT");
+
+              stats.articlesProcessed += 1;
+              stats.iocsInserted += insertedIocs;
+              if (inserted) stats.articlesInserted += 1;
+            } catch (error) {
+              await client.query("ROLLBACK");
+              console.error(
+                `News scraper: failed to process article ${article.url}`,
+                error,
+              );
               continue;
-            }
-
-            const { articleId, inserted } = await this.saveArticle(
-              client,
-              sourceId,
-              article,
-            );
-
-            const iocs = extractIocsFromText(
-              [article.title, article.summary, article.content, article.url]
-                .filter(Boolean)
-                .join(" "),
-            );
-
-            const insertedIocs = await this.persistIocs(
-              client,
-              articleId,
-              iocs,
-            );
-
-            stats.articlesProcessed += 1;
-            stats.iocsInserted += insertedIocs;
-
-            if (inserted) {
-              stats.articlesInserted += 1;
             }
           }
         } catch (error) {
@@ -242,14 +234,14 @@ class NewsScraper {
   ): Promise<string> {
     const result = await client.query<{ id: string }>(
       `
-        INSERT INTO news_sources (name, feed_url, site_url)
-        VALUES ($1, $2, $3)
-        ON CONFLICT (feed_url)
-        DO UPDATE SET
-          name = EXCLUDED.name,
-          site_url = COALESCE(EXCLUDED.site_url, news_sources.site_url),
-          updated_at = CURRENT_TIMESTAMP
-        RETURNING id
+      INSERT INTO news_sources (name, feed_url, site_url)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (feed_url)
+      DO UPDATE SET
+        name = EXCLUDED.name,
+        site_url = COALESCE(EXCLUDED.site_url, news_sources.site_url),
+        updated_at = CURRENT_TIMESTAMP
+      RETURNING id
       `,
       [feed.name, feed.feedUrl, feed.siteUrl ?? null],
     );
@@ -263,10 +255,7 @@ class NewsScraper {
 
   private mapItemToArticle(item: RssItem): ParsedArticle | null {
     const url = item.link?.trim();
-
-    if (!url) {
-      return null;
-    }
+    if (!url) return null;
 
     const title = item.title?.trim() || "Untitled news item";
     const summary =
@@ -274,6 +263,7 @@ class NewsScraper {
       item.summary?.trim() ||
       item.description?.trim() ||
       item.content?.trim();
+
     const contentPieces = [
       item.title,
       item.contentSnippet,
@@ -301,13 +291,13 @@ class NewsScraper {
   ): Promise<{ articleId: string; inserted: boolean }> {
     const result = await client.query<{ id: string; inserted: boolean }>(
       `
-        INSERT INTO news_articles (source_id, title, summary, url, published_at)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (url) DO UPDATE SET
-          title = EXCLUDED.title,
-          summary = COALESCE(EXCLUDED.summary, news_articles.summary),
-          published_at = COALESCE(EXCLUDED.published_at, news_articles.published_at)
-        RETURNING id, (xmax = 0) AS inserted
+      INSERT INTO news_articles (source_id, title, summary, url, published_at)
+      VALUES ($1, $2, $3, $4, $5)
+      ON CONFLICT (url) DO UPDATE SET
+        title = EXCLUDED.title,
+        summary = COALESCE(EXCLUDED.summary, news_articles.summary),
+        published_at = COALESCE(EXCLUDED.published_at, news_articles.published_at)
+      RETURNING id, (xmax = 0) AS inserted
       `,
       [
         sourceId,
@@ -338,9 +328,9 @@ class NewsScraper {
     for (const ioc of iocs) {
       const result = await client.query(
         `
-          INSERT INTO news_iocs (article_id, ioc_type, ioc_value)
-          VALUES ($1, $2, $3)
-          ON CONFLICT (article_id, ioc_type, ioc_value) DO NOTHING
+        INSERT INTO news_iocs (article_id, ioc_type, ioc_value)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (article_id, ioc_type, ioc_value) DO NOTHING
         `,
         [articleId, ioc.type, ioc.value],
       );
