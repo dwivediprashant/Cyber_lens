@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { authLoginService } from "../services/authLoginService";
 import { signAccessToken } from "../utils/jwt";
+import { migrateAnonymousOwnerToUser } from "../utils/ownershipMigration";
 export async function authLoginController(
   req: Request,
   res: Response,
@@ -9,6 +10,20 @@ export async function authLoginController(
     const { email, password } = req.body;
 
     const { userId } = await authLoginService({ email, password });
+
+    const owner = req.owner;
+
+    if (owner?.type === "anonymous" && owner.id) {
+      void (async () => {
+        try {
+          await migrateAnonymousOwnerToUser(owner.id, userId);
+        } catch (error) {
+          console.error("Ownership migration failed:", error);
+        }
+      })();
+    }
+
+    req.owner = { type: "user", id: userId };
     const accessToken = signAccessToken({ userId });
 
     res.status(200).json({ accessToken });
