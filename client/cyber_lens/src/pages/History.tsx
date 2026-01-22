@@ -17,9 +17,7 @@ type Row = {
   score: number;
 };
 
-function normalizeVerdict(
-  verdict: HistoryApiRow["verdict"],
-): Row["verdict"] {
+function normalizeVerdict(verdict: HistoryApiRow["verdict"]): Row["verdict"] {
   switch (verdict) {
     case "malicious":
       return "Malicious";
@@ -51,11 +49,14 @@ export default function History() {
   const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState("");
 
   useEffect(() => {
     async function loadHistory() {
       try {
-        const data = await httpJson<HistoryApiRow[]>("/history");
+        const trimmed = appliedSearch.trim();
+        const query = trimmed ? `?q=${encodeURIComponent(trimmed)}` : "";
+        const data = await httpJson<HistoryApiRow[]>(`/history${query}`);
 
         const mapped: Row[] = data.map((r) => ({
           ioc: r.ioc_value,
@@ -74,7 +75,7 @@ export default function History() {
     }
 
     loadHistory();
-  }, []);
+  }, [appliedSearch]);
 
   const verdictBadgeClass = (v: Row["verdict"]) =>
     v === "Malicious"
@@ -89,14 +90,6 @@ export default function History() {
     return (
       <div className="min-h-screen bg-neutral-950 text-neutral-400 flex items-center justify-center">
         Loading history...
-      </div>
-    );
-  }
-
-  if (rows.length === 0) {
-    return (
-      <div className="min-h-screen bg-neutral-950 text-neutral-400 flex items-center justify-center">
-        No scan history yet.
       </div>
     );
   }
@@ -119,84 +112,99 @@ export default function History() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search IOC, note…"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  setAppliedSearch(search);
+                }
+              }}
+              placeholder="Search IOC, type, verdict, date…"
               className="w-full sm:w-64 px-3 py-2 text-sm bg-neutral-900 border border-neutral-800 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-cyan-500"
             />
-            <button className="w-full sm:w-auto px-4 py-2 text-sm font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 transition-colors">
-              Export
+            <button
+              onClick={() => setAppliedSearch(search)}
+              className="w-full sm:w-auto px-4 py-2 text-sm font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 transition-colors"
+            >
+              Search
             </button>
           </div>
         </div>
 
-        <div className="overflow-x-auto border border-neutral-700 bg-neutral-950">
-          <table className="min-w-full border-collapse text-sm">
-            <thead className="bg-neutral-900 text-neutral-300">
-              <tr>
-                <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
-                  IOC
-                </th>
-                <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
-                  IOC Type
-                </th>
-                <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
-                  Verdict
-                </th>
-                <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
-                  Timestamp
-                </th>
-                <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
-                  Threat Score
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {rows.map((row, idx) => (
-                <tr
-                  key={idx}
-                  className="hover:bg-neutral-900 transition-colors"
-                >
-                  <td className="border border-neutral-800 px-4 py-3 font-mono text-neutral-100 truncate max-w-lg">
-                    {row.ioc}
-                  </td>
-
-                  <td className="border border-neutral-800 px-4 py-3 text-xs font-mono text-neutral-400">
-                    {row.iocType}
-                  </td>
-
-                  <td className="border border-neutral-800 px-4 py-3">
-                    <span
-                      className={`inline-flex items-center gap-2 px-2.5 py-1 text-xs font-medium ring-1 ${verdictBadgeClass(
-                        row.verdict,
-                      )}`}
-                    >
-                      <span
-                        className={`h-2 w-2 rounded-full ${
-                          row.verdict === "Malicious"
-                            ? "bg-red-400"
-                            : row.verdict === "Clean"
-                              ? "bg-emerald-400"
-                              : row.verdict === "Suspicious"
-                                ? "bg-amber-400"
-                                : "bg-neutral-400"
-                        }`}
-                      />
-                      {row.verdict}
-                    </span>
-                  </td>
-
-                  <td className="border border-neutral-800 px-4 py-3 text-neutral-400 whitespace-nowrap">
-                    {row.timestamp}
-                  </td>
-
-                  <td className="border border-neutral-800 px-4 py-3 text-neutral-300">
-                    {row.score}
-                  </td>
+        {rows.length === 0 ? (
+          <div className="border border-neutral-800 bg-neutral-950 px-6 py-10 text-center text-neutral-400">
+            No results found.
+          </div>
+        ) : (
+          <div className="overflow-x-auto border border-neutral-700 bg-neutral-950">
+            <table className="min-w-full border-collapse text-sm">
+              <thead className="bg-neutral-900 text-neutral-300">
+                <tr>
+                  <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
+                    IOC
+                  </th>
+                  <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
+                    IOC Type
+                  </th>
+                  <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
+                    Verdict
+                  </th>
+                  <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
+                    Timestamp
+                  </th>
+                  <th className="border border-neutral-700 px-4 py-3 text-left font-medium">
+                    Threat Score
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+
+              <tbody>
+                {rows.map((row, idx) => (
+                  <tr
+                    key={idx}
+                    className="hover:bg-neutral-900 transition-colors"
+                  >
+                    <td className="border border-neutral-800 px-4 py-3 font-mono text-neutral-100 truncate max-w-lg">
+                      {row.ioc}
+                    </td>
+
+                    <td className="border border-neutral-800 px-4 py-3 text-xs font-mono text-neutral-400">
+                      {row.iocType}
+                    </td>
+
+                    <td className="border border-neutral-800 px-4 py-3">
+                      <span
+                        className={`inline-flex items-center gap-2 px-2.5 py-1 text-xs font-medium ring-1 ${verdictBadgeClass(
+                          row.verdict,
+                        )}`}
+                      >
+                        <span
+                          className={`h-2 w-2 rounded-full ${
+                            row.verdict === "Malicious"
+                              ? "bg-red-400"
+                              : row.verdict === "Clean"
+                                ? "bg-emerald-400"
+                                : row.verdict === "Suspicious"
+                                  ? "bg-amber-400"
+                                  : "bg-neutral-400"
+                          }`}
+                        />
+                        {row.verdict}
+                      </span>
+                    </td>
+
+                    <td className="border border-neutral-800 px-4 py-3 text-neutral-400 whitespace-nowrap">
+                      {row.timestamp}
+                    </td>
+
+                    <td className="border border-neutral-800 px-4 py-3 text-neutral-300">
+                      {row.score}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <div className="mt-3 text-xs text-neutral-500">
           Showing {rows.length} recent scans — optimized for analyst review.
