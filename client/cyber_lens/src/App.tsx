@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import History from "./pages/History";
 import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -36,6 +37,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/history" element={<History />} />
           <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
         </Route>
 
         <Route path="/login" element={<Login />} />
