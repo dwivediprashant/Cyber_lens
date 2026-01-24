@@ -17,7 +17,7 @@ const VerifyEmail: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-lg lg:max-w-xl">
         {/* Card */}
         <div className="border border-neutral-800 bg-neutral-900 rounded-xl shadow-xl p-8 sm:p-10">
@@ -41,10 +41,10 @@ const VerifyEmail: React.FC = () => {
                 Cyber <span className="text-cyan-500">Lens</span>
               </span>
             </div>
-            <h1 className="text-3xl font-semibold tracking-tight mb-3">
+            <h1 className="text-4xl font-semibold tracking-tight mb-3">
               Check your email
             </h1>
-            <p className="text-sm text-neutral-400">
+            <p className="text-base text-neutral-400">
               We've sent a verification link to your email
             </p>
           </div>
@@ -65,7 +65,7 @@ const VerifyEmail: React.FC = () => {
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                 />
               </svg>
-              <span className="text-sm font-mono text-neutral-300">
+              <span className="text-base font-mono text-neutral-300">
                 {email}
               </span>
             </div>
@@ -77,7 +77,7 @@ const VerifyEmail: React.FC = () => {
               <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center mt-0.5">
                 <span className="text-xs text-cyan-400">1</span>
               </div>
-              <p className="text-sm text-neutral-300">
+              <p className="text-base text-neutral-300">
                 Open your email inbox and find the verification message from
                 CyberLens
               </p>
@@ -87,7 +87,7 @@ const VerifyEmail: React.FC = () => {
               <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center mt-0.5">
                 <span className="text-xs text-cyan-400">2</span>
               </div>
-              <p className="text-sm text-neutral-300">
+              <p className="text-base text-neutral-300">
                 Click the verification link to activate your account
               </p>
             </div>
@@ -96,7 +96,7 @@ const VerifyEmail: React.FC = () => {
               <div className="w-5 h-5 rounded-full bg-cyan-500/20 flex items-center justify-center mt-0.5">
                 <span className="text-xs text-cyan-400">3</span>
               </div>
-              <p className="text-sm text-neutral-300">
+              <p className="text-base text-neutral-300">
                 Return to CyberLens to access your threat intelligence dashboard
               </p>
             </div>
@@ -106,24 +106,24 @@ const VerifyEmail: React.FC = () => {
           <button
             onClick={handleResendEmail}
             disabled={isResending}
-            className="w-full px-4 py-3 text-sm font-medium bg-neutral-800 text-neutral-300 hover:bg-neutral-700 disabled:bg-neutral-800 disabled:text-neutral-500 border border-neutral-700 transition-colors"
+            className="w-full px-4 py-3 text-base font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
           >
             {isResending ? "Sending..." : "Resend verification email"}
           </button>
 
           {/* Help */}
           <div className="mt-6 text-center">
-            <p className="text-xs text-neutral-500">
+            <p className="text-sm text-neutral-400">
               Didn't receive the email? Check your spam folder or try resending
             </p>
           </div>
 
           {/* Footer */}
           <div className="mt-6 text-center">
-            <p className="text-sm text-neutral-400">
+            <p className="text-base font-medium text-neutral-300">
               <a
                 href="/login"
-                className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="text-cyan-300 hover:text-cyan-200 transition-colors"
               >
                 Back to sign in
               </a>
@@ -132,7 +132,7 @@ const VerifyEmail: React.FC = () => {
 
           {/* Security note */}
           <div className="mt-4 text-center">
-            <p className="text-xs text-neutral-500">
+            <p className="text-sm text-neutral-400">
               For security reasons, this link will expire in 24 hours
             </p>
           </div>

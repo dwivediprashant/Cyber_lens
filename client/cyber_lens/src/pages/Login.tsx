@@ -47,7 +47,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-lg lg:max-w-xl">
         {/* Card */}
         <div className="border border-neutral-800 bg-neutral-900 rounded-xl shadow-xl p-8 sm:p-10">
@@ -59,10 +59,10 @@ const Login: React.FC = () => {
                 Cyber <span className="text-cyan-500">Lens</span>
               </span>
             </div>
-            <h1 className="text-3xl font-semibold tracking-tight mb-3">
+            <h1 className="text-4xl font-semibold tracking-tight mb-3">
               Log in to CyberLens
             </h1>
-            <p className="text-sm text-neutral-400">
+            <p className="text-base text-neutral-400">
               Access your threat intelligence dashboard
             </p>
           </div>
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-base font-medium text-neutral-300 mb-2">
                 Email Address
               </label>
               <input
@@ -79,10 +79,9 @@ const Login: React.FC = () => {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  if (errors.email)
-                    setErrors({ ...errors, email: undefined });
+                  if (errors.email) setErrors({ ...errors, email: undefined });
                 }}
-                className={`w-full px-4 py-3 text-sm bg-neutral-950 border ${
+                className={`w-full px-4 py-3 text-base bg-neutral-950 border ${
                   errors.email ? "border-red-500" : "border-neutral-800"
                 } placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors`}
                 placeholder="you@example.com"
@@ -95,7 +94,7 @@ const Login: React.FC = () => {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-base font-medium text-neutral-300 mb-2">
                 Password
               </label>
               <input
@@ -106,16 +105,14 @@ const Login: React.FC = () => {
                   if (errors.password)
                     setErrors({ ...errors, password: undefined });
                 }}
-                className={`w-full px-4 py-3 text-sm bg-neutral-950 border ${
+                className={`w-full px-4 py-3 text-base bg-neutral-950 border ${
                   errors.password ? "border-red-500" : "border-neutral-800"
                 } placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-colors`}
                 placeholder="••••••••"
                 disabled={isLoading}
               />
               {errors.password && (
-                <p className="mt-1 text-xs text-red-400">
-                  {errors.password}
-                </p>
+                <p className="mt-1 text-xs text-red-400">{errors.password}</p>
               )}
             </div>
 
@@ -123,27 +120,27 @@ const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-3 text-sm font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
+              className="w-full px-4 py-3 text-base font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 disabled:bg-neutral-700 disabled:text-neutral-500 transition-colors"
             >
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <div className="mt-8 text-center space-y-2">
+          <div className="mt-8 text-center space-y-4">
             <a
               href="/"
-              className="text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
+              className="text-base font-medium text-cyan-300 hover:text-cyan-200 transition-colors"
             >
               Continue without signing in
             </a>
-  
-           <p className="mt-2 text-sm text-neutral-400">
+
+            <p className="mt-2 text-base text-neutral-400">
               Don't have an account?{" "}
               <a
-              href="/signup"
-              className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                href="/signup"
+                className="text-cyan-400 hover:text-cyan-300 transition-colors"
               >
-              Sign up
+                Sign up
               </a>
             </p>
           </div>

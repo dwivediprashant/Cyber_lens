@@ -60,7 +60,7 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-lg lg:max-w-xl">
         <div className="border border-neutral-800 bg-neutral-900 rounded-xl shadow-xl p-8 sm:p-10">
           {/* Header */}
@@ -71,19 +71,19 @@ const Signup: React.FC = () => {
                 Cyber <span className="text-cyan-500">Lens</span>
               </span>
             </div>
-            <h1 className="text-3xl font-semibold tracking-tight mb-3">
+            <h1 className="text-4xl font-semibold tracking-tight mb-3">
               Create an account
             </h1>
-            <p className="text-sm text-neutral-400">
+            <p className="text-base text-neutral-400">
               Join the threat intelligence community
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6 py-2">
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-base font-medium text-neutral-300 mb-2">
                 Email Address
               </label>
               <input
@@ -91,10 +91,9 @@ const Signup: React.FC = () => {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value);
-                  if (errors.email)
-                    setErrors({ ...errors, email: undefined });
+                  if (errors.email) setErrors({ ...errors, email: undefined });
                 }}
-                className={`w-full px-4 py-3 text-sm bg-neutral-950 border ${
+                className={`w-full px-4 py-3 text-base bg-neutral-950 border ${
                   errors.email ? "border-red-500" : "border-neutral-800"
                 } placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-cyan-500`}
                 placeholder="you@example.com"
@@ -107,7 +106,7 @@ const Signup: React.FC = () => {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-base font-medium text-neutral-300 mb-2">
                 Password
               </label>
               <input
@@ -118,22 +117,20 @@ const Signup: React.FC = () => {
                   if (errors.password)
                     setErrors({ ...errors, password: undefined });
                 }}
-                className={`w-full px-4 py-3 text-sm bg-neutral-950 border ${
+                className={`w-full px-4 py-3 text-base bg-neutral-950 border ${
                   errors.password ? "border-red-500" : "border-neutral-800"
                 } placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-cyan-500`}
                 placeholder="••••••••"
                 disabled={isLoading}
               />
               {errors.password && (
-                <p className="mt-1 text-xs text-red-400">
-                  {errors.password}
-                </p>
+                <p className="mt-1 text-xs text-red-400">{errors.password}</p>
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-neutral-300 mb-2">
+              <label className="block text-base font-medium text-neutral-300 mb-2">
                 Confirm Password
               </label>
               <input
@@ -144,7 +141,7 @@ const Signup: React.FC = () => {
                   if (errors.confirmPassword)
                     setErrors({ ...errors, confirmPassword: undefined });
                 }}
-                className={`w-full px-4 py-3 text-sm bg-neutral-950 border ${
+                className={`w-full px-4 py-3 text-base bg-neutral-950 border ${
                   errors.confirmPassword
                     ? "border-red-500"
                     : "border-neutral-800"
@@ -163,20 +160,17 @@ const Signup: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full px-4 py-3 text-sm font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 disabled:bg-neutral-700 disabled:text-neutral-500"
+              className="w-full px-4 py-3 text-base font-medium bg-cyan-500 text-neutral-950 hover:bg-cyan-400 disabled:bg-neutral-700 disabled:text-neutral-500"
             >
               {isLoading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
           {/* Footer */}
-          <div className="mt-8 text-center">
-            <p className="text-sm text-neutral-400">
+          <div className="mt-10 text-center">
+            <p className="text-base text-neutral-400">
               Already have an account?{" "}
-              <a
-                href="/login"
-                className="text-cyan-400 hover:text-cyan-300"
-              >
+              <a href="/login" className="text-cyan-400 hover:text-cyan-300">
                 Sign in
               </a>
             </p>
