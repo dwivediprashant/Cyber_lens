@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { authSignupService } from "../services/authSignupService";
 import { generateEmailVerificationToken } from "../services/emailVerificationToken";
+import { sendEmail } from "../services/emailService";
 
 /**
  * POST /auth/signup
@@ -29,10 +30,21 @@ export async function authSignupController(
       throw new Error("FRONTEND_URL must be set in environment");
     }
 
-    const verificationLink =
-      `${frontendUrl}/verify-email?token=${encodeURIComponent(token)}`;
+    const verificationLink = `${frontendUrl}/verify-email?token=${encodeURIComponent(token)}`;
 
+    // Send verification email
+    try {
+      await sendEmail({
+        to: email,
+        subject: "Verify your email address",
+        text: `Welcome to Cyber Lens!\n\nPlease verify your email address by clicking the link below:\n${verificationLink}\n\nIf you did not sign up, you can ignore this email.`,
+      });
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+      // Continue to respond with success, but log the error
+    }
 
+    // Log for development/debugging
     console.info(
       `[email-verification] Magic link for ${email}: ${verificationLink}`,
     );
