@@ -9,14 +9,21 @@ const VerifyAction: React.FC = () => {
     "verifying",
   );
   const [message, setMessage] = useState("Verifying your security token...");
+  const [verificationAttempted, setVerificationAttempted] = useState(false);
 
   useEffect(() => {
+    // Prevent multiple verification attempts
+    if (verificationAttempted) {
+      return;
+    }
+
     const token = searchParams.get("token");
     const type = searchParams.get("type");
 
     if (!token || !type) {
       setStatus("error");
       setMessage("Invalid security link or missing verification data.");
+      setVerificationAttempted(true);
       return;
     }
 
@@ -30,14 +37,18 @@ const VerifyAction: React.FC = () => {
           });
           setStatus("success");
           setMessage(
-            "Your account and all associated data have been permanently removed.",
+            "Your account has been successfully deleted. You are now being logged out.",
           );
 
-          // Clear any local session/identity if applicable
-          // In this architecture, we might want to reset the anonymous-client-id
+          // Clear authentication tokens from localStorage
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("userEmail");
           localStorage.removeItem("anonymous-client-id");
 
-          setTimeout(() => navigate("/"), 5000);
+          // Dispatch auth state change event to update navbar and other components
+          window.dispatchEvent(new Event("auth-state-changed"));
+
+          setTimeout(() => navigate("/"), 3000);
         } else {
           setStatus("error");
           setMessage("Unrecognized verification sequence.");
@@ -48,10 +59,11 @@ const VerifyAction: React.FC = () => {
           err instanceof Error ? err.message : "Security verification failed.",
         );
       }
+      setVerificationAttempted(true);
     };
 
     performVerification();
-  }, [searchParams, navigate]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center px-4">

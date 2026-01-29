@@ -47,6 +47,7 @@ const Settings: React.FC = () => {
     try {
       await httpJson("/auth/change-password", {
         method: "POST",
+        auth: true,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
@@ -72,6 +73,7 @@ const Settings: React.FC = () => {
     try {
       await httpJson("/auth/request-delete", {
         method: "POST",
+        auth: true,
         headers: { "Content-Type": "application/json" },
       });
       setDeleteRequested(true);

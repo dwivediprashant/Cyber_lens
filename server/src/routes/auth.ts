@@ -1,18 +1,13 @@
 import { Router, Request, Response } from "express";
 import pool from "../db";
-import crypto from "crypto";
 import {
   createMagicLink,
   sendMagicLinkEmail,
   verifyMagicLink,
 } from "../utils/magicLink";
+import { hashPassword, verifyPassword } from "../utils/password";
 
 const router = Router();
-
-// TODO: Use bcrypt in production
-function hashPassword(password: string): string {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
 
 
 // POST /auth/change-password
@@ -38,14 +33,16 @@ router.post("/change-password", async (req: Request, res: Response) => {
 
     const { password_hash } = userResult.rows[0];
 
-    if (hashPassword(currentPassword) !== password_hash) {
+    const isPasswordValid = await verifyPassword(currentPassword, password_hash);
+    if (!isPasswordValid) {
       res.status(400).json({ error: "The current password you entered is incorrect" });
       return;
     }
 
+    const newPasswordHash = await hashPassword(newPassword);
     await pool.query(
-      "UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2",
-      [hashPassword(newPassword), owner.id]
+      "UPDATE users SET password_hash = $1 WHERE id = $2",
+      [newPasswordHash, owner.id]
     );
 
     res.json({ message: "Security credentials updated successfully" });
@@ -137,9 +134,10 @@ router.post("/verify-delete", async (req: Request, res: Response) => {
 router.post("/signup", async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
+    const passwordHash = await hashPassword(password);
     const result = await pool.query(
       "INSERT INTO users (email, password_hash) VALUES ($1, $2) RETURNING id",
-      [email, hashPassword(password)]
+      [email, passwordHash]
     );
     res.json({ success: true, userId: result.rows[0].id });
   } catch (error) {
