@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { httpJson } from "../utils/httpClient";
+import { useAuth } from "../hooks/useAuth";
 
 type HistoryApiRow = {
   ioc_value: string;
@@ -47,7 +48,6 @@ function formatDateDDMMYYYYWithTime(iso: string): string {
 export default function History() {
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
 
@@ -56,7 +56,7 @@ export default function History() {
       try {
         const trimmed = appliedSearch.trim();
         const query = trimmed ? `?q=${encodeURIComponent(trimmed)}` : "";
-        const data = await httpJson<HistoryApiRow[]>(`/history${query}`);
+        const data = await httpJson<HistoryApiRow[]>(`/history${query}`, { auth: true });
 
         const mapped: Row[] = data.map((r) => ({
           ioc: r.ioc_value,

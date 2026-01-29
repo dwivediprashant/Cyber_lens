@@ -37,6 +37,7 @@ const Home: React.FC = () => {
           ioc: iocValue.trim(),
           type: iocType,
         }),
+        auth: true,
       });
 
       setResult(response);
