@@ -24,21 +24,21 @@ This repository is intentionally **partially implemented** to encourage learning
 
 Get started with our comprehensive documentation:
 
-### [User Guide](docs/usage-guide.md)
+### [User Guide](Docs/usage-guide.md)
 Learn how to use Cyber Lens effectively:
 - **IOC Lookup** - Analyze indicators across multiple threat intelligence sources
 - **History** - Track and review your analysis history
 - **News** - Stay updated with security news and extracted IOCs
 - **Analytics** - Visualize threat trends and patterns
 
-### [Developer Guide](docs/developer-guide.md)
+### [Developer Guide](Docs/developer-guide.md)
 Set up your development environment and contribute:
 - **Tech Stack Overview** - Understand our technology choices
 - **Project Structure** - Navigate the codebase effectively
 - **Environment Setup** - Get up and running locally
 - **Contribution Workflow** - Learn how to contribute code
 
-### [Threat Scoring Model](docs/Scoring-model.md)
+### [Threat Scoring Model](Docs/Scoring-model.md)
 Understand how we calculate threat scores and determine verdicts.
 
 ---
