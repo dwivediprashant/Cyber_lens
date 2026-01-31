@@ -42,6 +42,7 @@ function App() {
         {/* -------- App Pages (with Navbar & Footer) -------- */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/lookup" element={<Home />} />
           <Route path="/history" element={<History />} />
           <Route path="/news" element={<News />} />
           <Route path="/news/:id" element={<NewsDetail />} />
