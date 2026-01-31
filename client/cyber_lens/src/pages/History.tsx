@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { httpJson } from "../utils/httpClient";
-import { useAuth } from "../hooks/useAuth";
 
 type HistoryApiRow = {
   ioc_value: string;
@@ -13,6 +13,7 @@ type HistoryApiRow = {
 type Row = {
   ioc: string;
   iocType: string;
+  iocTypeRaw: string;
   verdict: "Malicious" | "Clean" | "Suspicious" | "Unknown";
   timestamp: string;
   score: number;
@@ -61,6 +62,7 @@ export default function History() {
         const mapped: Row[] = data.map((r) => ({
           ioc: r.ioc_value,
           iocType: r.ioc_type.toUpperCase(),
+          iocTypeRaw: r.ioc_type,
           verdict: normalizeVerdict(r.verdict),
           timestamp: formatDateDDMMYYYYWithTime(r.timestamp),
           score: r.score,
@@ -169,8 +171,14 @@ export default function History() {
                     key={idx}
                     className="hover:bg-neutral-900 transition-colors"
                   >
-                    <td className="border border-neutral-800 px-4 py-3 font-mono text-neutral-100 truncate max-w-lg">
-                      {row.ioc}
+                    <td className="border border-neutral-800 px-4 py-3">
+                      <Link
+                        to={`/lookup?value=${encodeURIComponent(row.ioc)}&type=${encodeURIComponent(row.iocTypeRaw)}`}
+                        className="inline-block max-w-lg truncate font-mono text-cyan-400 hover:text-cyan-300 underline decoration-cyan-500/60"
+                        title="Re-run lookup"
+                      >
+                        {row.ioc}
+                      </Link>
                     </td>
 
                     <td className="border border-neutral-800 px-4 py-3 text-xs font-mono text-neutral-400">

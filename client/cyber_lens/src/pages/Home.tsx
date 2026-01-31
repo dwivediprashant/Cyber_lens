@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { httpJson } from "../utils/httpClient";
 
 interface LookupResponse {
@@ -10,12 +11,39 @@ interface LookupResponse {
   meta: unknown;
 }
 
+function normalizeType(raw: string | null): "IP" | "Domain" | "URL" | "Hash" | null {
+  if (!raw) return null;
+  const lower = raw.toLowerCase();
+  if (lower === "ip") return "IP";
+  if (lower === "domain") return "Domain";
+  if (lower === "url") return "URL";
+  if (lower === "hash") return "Hash";
+  return null;
+}
+
 const Home: React.FC = () => {
+  const [searchParams] = useSearchParams();
   const [iocValue, setIocValue] = useState("");
   const [iocType, setIocType] = useState("IP");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<LookupResponse | null>(null);
+
+  useEffect(() => {
+    const valueParam = searchParams.get("value");
+    const typeParam = searchParams.get("type");
+
+    if (valueParam !== null) {
+      setIocValue(valueParam);
+    }
+
+    if (typeParam) {
+      const normalizedType = normalizeType(typeParam);
+      if (normalizedType) {
+        setIocType(normalizedType);
+      }
+    }
+  }, [searchParams]);
 
   const handleSearch = async () => {
     if (!iocValue.trim()) {
