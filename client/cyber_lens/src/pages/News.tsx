@@ -99,6 +99,31 @@ export default function News() {
           </div>
         </header>
 
+        {/* Pagination Top */}
+        {totalPages > 1 && (
+          <div className="mb-8 flex items-center justify-center gap-3">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="px-3 py-1 text-sm border border-neutral-700 disabled:opacity-40"
+            >
+              Prev
+            </button>
+
+            <span className="text-sm text-neutral-400">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="px-3 py-1 text-sm border border-neutral-700 disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        )}
+
         {/* News Grid */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {paginatedNews.map((item, idx) => (
@@ -147,29 +172,7 @@ export default function News() {
           )}
         </section>
 
-        {totalPages > 1 && (
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="px-3 py-1 text-sm border border-neutral-700 disabled:opacity-40"
-            >
-              Prev
-            </button>
-
-            <span className="text-sm text-neutral-400">
-              Page {currentPage} of {totalPages}
-            </span>
-
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="px-3 py-1 text-sm border border-neutral-700 disabled:opacity-40"
-            >
-              Next
-            </button>
-          </div>
-        )}
+        {/* ...existing code... */}
 
         {/* Footer */}
         <div className="mt-8 text-xs text-neutral-500">
