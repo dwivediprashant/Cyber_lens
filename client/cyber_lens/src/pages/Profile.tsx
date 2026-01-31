@@ -15,7 +15,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 flex items-center justify-center">
-      <section className="border border-cyan-700 bg-neutral-900 rounded-2xl shadow-2xl pt-8 pb-8 px-0 w-full max-w-2xl min-w-[420px] min-h-[420px] flex flex-col justify-center items-center mx-4 my-8">
+      <section className="bg-neutral-900 rounded-2xl shadow-2xl pt-8 pb-8 px-0 w-full max-w-2xl min-w-[420px] min-h-[420px] flex flex-col justify-center items-center mx-4 my-8">
         <div className="flex flex-col items-center mb-6">
           <div className="w-20 h-20 rounded-full bg-neutral-800 flex items-center justify-center mb-4">
             {/* Placeholder for profile image */}
@@ -59,25 +59,25 @@ export default function Profile() {
             <div className="grid grid-cols-2 gap-6">
               <Link
                 to="/"
-                className="px-6 py-3 bg-cyan-500 text-neutral-950 rounded-lg font-bold text-center text-lg hover:bg-cyan-400 transition-colors shadow"
+                className="px-2 py-2 bg-black text-white rounded-lg font-semibold flex items-center justify-center text-base border border-black hover:bg-neutral-800 hover:text-cyan-400 transition-colors shadow"
               >
                 Home
               </Link>
               <Link
                 to="/history"
-                className="px-6 py-3 bg-cyan-500 text-neutral-950 rounded-lg font-bold text-center text-lg hover:bg-cyan-400 transition-colors shadow"
+                className="px-2 py-2 bg-black text-white rounded-lg font-semibold flex items-center justify-center text-base border border-black hover:bg-neutral-800 hover:text-cyan-400 transition-colors shadow"
               >
                 History
               </Link>
               <Link
                 to="/news"
-                className="px-6 py-3 bg-cyan-500 text-neutral-950 rounded-lg font-bold text-center text-lg hover:bg-cyan-400 transition-colors shadow"
+                className="px-2 py-2 bg-black text-white rounded-lg font-semibold flex items-center justify-center text-base border border-black hover:bg-neutral-800 hover:text-cyan-400 transition-colors shadow"
               >
                 News
               </Link>
               <Link
                 to="/analytics"
-                className="px-6 py-3 bg-cyan-500 text-neutral-950 rounded-lg font-bold text-center text-lg hover:bg-cyan-400 transition-colors shadow"
+                className="px-2 py-2 bg-black text-white rounded-lg font-semibold flex items-center justify-center text-base border border-black hover:bg-neutral-800 hover:text-cyan-400 transition-colors shadow"
               >
                 Analytics
               </Link>
