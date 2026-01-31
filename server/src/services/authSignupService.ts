@@ -30,13 +30,20 @@ export async function authSignupService(
   const client = await pool.connect();
 
   try {
+    // Check for existing user with this email
     const existing = await client.query(
-      `SELECT id FROM users WHERE email = $1 LIMIT 1`,
+      `SELECT id, email_verified FROM users WHERE email = $1 LIMIT 1`,
       [email],
     );
 
     if (existing.rowCount && existing.rowCount > 0) {
-      throw new Error("Email already registered");
+      const user = existing.rows[0];
+      if (user.email_verified) {
+        throw new Error("Email already registered");
+      } else {
+        // Delete unverified user so email can be reused
+        await client.query(`DELETE FROM users WHERE id = $1`, [user.id]);
+      }
     }
 
     const passwordHash = await hashPassword(password);
